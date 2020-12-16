@@ -83,6 +83,7 @@ public class AutentificationService {
     }
 
     public AuthResponse login(Login loginRequest) {
+        Optional<User> user = userRepo.findByUserName(loginRequest.getUserName());
         Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUserName(),
                 loginRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authenticate);
@@ -92,6 +93,7 @@ public class AutentificationService {
                 .refreshToken(refreshTokenService.generateRefreshToken().getToken())
                 .expiresAt(Instant.now().plusMillis(jwtProvider.getJwtExpirationInMillis()))
                 .userName(loginRequest.getUserName())
+                .email(user.get().getEmail())
                 .build();
     }
 

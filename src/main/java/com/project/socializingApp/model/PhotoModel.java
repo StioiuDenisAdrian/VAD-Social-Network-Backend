@@ -1,13 +1,17 @@
 package com.project.socializingApp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.project.socializingApp.dataLayer.AuthResponse;
 import lombok.*;
 import net.bytebuddy.agent.builder.AgentBuilder;
 import org.hibernate.annotations.Fetch;
+import org.springframework.security.core.Transient;
 
 import javax.persistence.*;
 
 import java.io.Serializable;
+import java.util.List;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -16,20 +20,27 @@ import static javax.persistence.GenerationType.IDENTITY;
 @NoArgsConstructor
 @Setter
 @Getter
-@Builder
 @Entity
-public class PhotoModel implements Serializable {
+public class PhotoModel {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
+    @JsonIgnore
     private User user;
+
+    //@Basic(fetch = FetchType.LAZY)
     @Lob
-    @Basic(fetch = FetchType.LAZY)
+    @Column(columnDefinition="BLOB")
+    @JsonIgnore
     private byte[] picture;
 
-    private Integer likes;
-    private Integer dislikes;
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
+    @JsonIgnore
+    private List<User> likes;
+    @ManyToMany(fetch = FetchType.LAZY,cascade = {CascadeType.ALL})
+    @JsonIgnore
+    private List<User> dislikes;
     private String description;
 
 }

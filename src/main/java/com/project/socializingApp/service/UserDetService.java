@@ -1,6 +1,7 @@
 package com.project.socializingApp.service;
 
 import com.project.socializingApp.model.PhotoModel;
+import com.project.socializingApp.dataLayer.UserUpdateDetails;
 import com.project.socializingApp.model.User;
 import com.project.socializingApp.repository.PhotoRepo;
 import com.project.socializingApp.repository.UserRepo;
@@ -41,6 +42,16 @@ public class UserDetService implements UserDetailsService {
 
     private Collection<? extends GrantedAuthority> getAuthorities(String role) {
         return singletonList(new SimpleGrantedAuthority(role));
+    }
+
+    public void updateUserDetails(User user)
+    {
+        userRepo.save(user);
+    }
+
+    public User getUserDetails(String userName)
+    {
+       return userRepo.findByUserName(userName).get();
     }
 
     public List<PhotoModel> recommend(String name){

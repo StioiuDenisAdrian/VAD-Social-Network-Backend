@@ -9,5 +9,7 @@ import java.util.List;
 
 @Repository
 public interface PhotoRepo extends JpaRepository<PhotoModel, Long> {
-    List<PhotoModel> findAllByUserUserIdContains(Long id);
+    //List<PhotoModel> findAllByUserUserIdContains(Long id);
+    List<PhotoModel> findAllByOrderByIdDesc();
+    List<PhotoModel> findAllByUser_UserId(Long id);
 }

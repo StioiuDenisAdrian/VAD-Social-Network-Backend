@@ -8,6 +8,7 @@ import com.project.socializingApp.model.MyException;
 import com.project.socializingApp.model.RefreshToken;
 import com.project.socializingApp.model.User;
 import com.project.socializingApp.model.VerificationToken;
+import com.project.socializingApp.repository.PhotoRepo;
 import com.project.socializingApp.repository.UserRepo;
 import com.project.socializingApp.repository.VerificationTokenRepo;
 import com.project.socializingApp.security.JwtProvider;
@@ -39,6 +40,7 @@ public class AutentificationService {
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
     private final RefreshTokenService refreshTokenService;
+    private final PhotoRepo photoRepo;
 
     @Transactional
     public void signUp (RegisterData registerData ) throws Exception {
@@ -53,6 +55,7 @@ public class AutentificationService {
         user.setPassword(encoder.encode(registerData.getPassword()));
         user.setCreated(Instant.now());
         user.setEnabled(true); // for email verification set it to false
+        user.setRecommendation(photoRepo.findAllByOrderByIdDesc());
         userRepo.save(user);
         generateVerification(user);
     }

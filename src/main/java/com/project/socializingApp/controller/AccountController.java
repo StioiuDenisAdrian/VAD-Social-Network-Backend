@@ -29,11 +29,11 @@ public class AccountController {
                 user.setEmail(userUpdateDetails.getEmail());
             }
 
-            if (!userUpdateDetails.getNewPassword().isEmpty()) {
+            if (userUpdateDetails.getNewPassword() != null && !userUpdateDetails.getNewPassword().isEmpty()) {
                 BCryptPasswordEncoder encoder = passwordEncoder();
 
                 if (encoder.matches(userUpdateDetails.getOldPassword(), user.getPassword())) {
-                    user.setPassword(userUpdateDetails.getNewPassword());
+                    user.setPassword(encoder.encode(userUpdateDetails.getNewPassword()));
                 } else {
                     return new ResponseEntity<>("Wrong password!", HttpStatus.BAD_REQUEST);
                 }
@@ -44,7 +44,8 @@ public class AccountController {
             return ResponseEntity.ok().build();
 
         } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();//new ResponseEntity<>("Server error!", HttpStatus.);
+            System.out.println(ex);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 }

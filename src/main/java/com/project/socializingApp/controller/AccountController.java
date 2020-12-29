@@ -48,4 +48,16 @@ public class AccountController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @DeleteMapping("/delete/{userName}")
+    public ResponseEntity<String> delete(@PathVariable String userName) {
+        try {
+            User user = userService.getUserDetails(userName);
+            userService.deleteUserAccount(user);
+            return ResponseEntity.ok().build();
+        } catch (Exception ex) {
+            System.out.println(ex);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }

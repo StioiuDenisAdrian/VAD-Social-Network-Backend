@@ -8,9 +8,13 @@ import com.project.socializingApp.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import recom.RecommendationSystem;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class PhotoService {
@@ -30,18 +34,19 @@ public class PhotoService {
         photoModel.setUser(user);
         photoModel.setPicture(requestPhoto.getImage());
         photoModel.setDescription(requestPhoto.getDescription());
-        photoModel.setLikes(new ArrayList<User>());
-        photoModel.setDislikes(new ArrayList<User>());
+        photoModel.setLikes(new ArrayList<>());
+        photoModel.setDislikes(new ArrayList<>());
         for (User user1: userRepo.findAll()) {
             if(!user1.equals(user)) {
                 user1.getRecommendation().add(photoModel);
+                refreshRecom(user1);
             }
             //userRepo.save(user1);
         }
         //photoRepo.save(photoModel);
         return photoModel;
     }
-    public List<PhotoModel> list(){
+    public List<PhotoModel> set(){
         List<PhotoModel> photoModels = new ArrayList<>(photoRepo.findAll());
         for (PhotoModel p:photoModels) {
             p.setPicture(new byte[]{1});
@@ -49,7 +54,7 @@ public class PhotoService {
         return photoModels;
     }
 
-    public List<PhotoModel> listByUsername(String username){
+    public List<PhotoModel> setByUsername(String username){
         return photoRepo.findAllByUser_UserId(userRepo.findByUserName(username).orElseThrow().getUserId());
     }
     @Transactional
@@ -59,9 +64,12 @@ public class PhotoService {
         List<User> users = photoModel.getLikes();
         if(users.contains(user)){
             users.remove(user);
+            user.getLikes().remove(photoModel);
         }else {
             users.add(user);
+            user.getLikes().add(photoModel);
         }
+        refreshRecom(user);
         //photoRepo.save(photoModel);
         return photoModel;
     }
@@ -73,17 +81,25 @@ public class PhotoService {
         List<User> users1 = photoModel.getDislikes();
         if(users.contains(user)){
             users.remove(user);
+            user.getLikes().remove(photoModel);
         }else {
             users.add(user);
+            user.getLikes().add(photoModel);
         }
         if(users1.contains(user)){
             users1.remove(user);
+            user.getDislikes().remove(photoModel);
         }else {
             users1.add(user);
+            user.getDislikes().add(photoModel);
         }
+        refreshRecom(user);
         //photoRepo.save(photoModel);
         return photoModel;
     }
+
+
+
     @Transactional
     public PhotoModel updateDislike(Long id, String username){
         PhotoModel photoModel = photoRepo.getOne(id);
@@ -91,9 +107,12 @@ public class PhotoService {
         List<User> users = photoModel.getDislikes();
         if(users.contains(user)){
             users.remove(user);
+            user.getDislikes().remove(photoModel);
         }else {
             users.add(user);
+            user.getDislikes().add(photoModel);
         }
+        refreshRecom(user);
         //photoRepo.save(photoModel);
         return photoModel;
     }
@@ -146,6 +165,18 @@ public class PhotoService {
 
     public String getUsername(Long id){
         return photoRepo.getOne(id).getUser().getUserName();
+    }
+
+    private void refreshRecom(User user) {
+        RecommendationSystem recommendationSystem = new RecommendationSystem();
+        try {
+            user.setRecommendation(recommendationSystem.recommendations(user.getRecomIndex()
+                    ,user.getRecommendation()
+                    ,user.getLikes()
+                    ,user.getDislikes()));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
 }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.RequestScope;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/photo")
@@ -27,13 +28,13 @@ public class PhotoController {
     @GetMapping("/")
     @ResponseStatus(OK)
     public List<PhotoModel> getAll(){
-        return photoService.list();
+        return photoService.set();
     }
 
     @GetMapping("/user/")
     @ResponseStatus(OK)
     public List<PhotoModel> getAll(@RequestParam String username){
-        return photoService.listByUsername(username);
+        return photoService.setByUsername(username);
     }
 
     @PostMapping("/post")

@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/account")
 @AllArgsConstructor
@@ -59,5 +61,11 @@ public class AccountController {
             System.out.println(ex);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+      
+    @GetMapping("/usernames")
+    @ResponseStatus(HttpStatus.OK)
+    public List<String> getAllUsers(){
+        return userService.listAllUsers();
+
     }
 }

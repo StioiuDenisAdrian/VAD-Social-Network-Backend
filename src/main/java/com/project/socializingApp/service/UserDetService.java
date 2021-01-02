@@ -54,6 +54,12 @@ public class UserDetService implements UserDetailsService {
         userRepo.save(user);
     }
 
+    public void deleteUserAccount(User user)
+    {
+        user.setEnabled(false);
+        userRepo.save(user);
+    }
+
     public User getUserDetails(String userName)
     {
        return userRepo.findByUserName(userName).get();

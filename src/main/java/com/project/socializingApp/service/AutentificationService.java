@@ -4,10 +4,7 @@ import com.project.socializingApp.dataLayer.AuthResponse;
 import com.project.socializingApp.dataLayer.Login;
 import com.project.socializingApp.dataLayer.RefreshTokenData;
 import com.project.socializingApp.dataLayer.RegisterData;
-import com.project.socializingApp.model.MyException;
-import com.project.socializingApp.model.RefreshToken;
-import com.project.socializingApp.model.User;
-import com.project.socializingApp.model.VerificationToken;
+import com.project.socializingApp.model.*;
 import com.project.socializingApp.repository.PhotoRepo;
 import com.project.socializingApp.repository.UserRepo;
 import com.project.socializingApp.repository.VerificationTokenRepo;
@@ -28,8 +25,8 @@ import org.springframework.web.client.HttpClientErrorException;
 
 
 import java.time.Instant;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+
 @AllArgsConstructor
 @Service
 public class AutentificationService {
@@ -56,6 +53,8 @@ public class AutentificationService {
         user.setCreated(Instant.now());
         user.setEnabled(true); // for email verification set it to false
         user.setRecommendation(photoRepo.findAllByOrderByIdDesc());
+        user.setRecomIndex(0);
+        user.setFriends(new ArrayList<>());
         userRepo.save(user);
         generateVerification(user);
     }

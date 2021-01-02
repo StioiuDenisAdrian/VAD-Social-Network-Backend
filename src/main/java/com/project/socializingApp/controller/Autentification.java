@@ -16,7 +16,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import javax.validation.Valid;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.HashSet;
 
 import static org.springframework.http.HttpStatus.OK;
 
@@ -33,7 +33,7 @@ public class Autentification {
             autentificationService.signUp(registerData);
             return new ResponseEntity<>("User registered!", HttpStatus.OK);
         }catch (Exception ex){
-            return new ResponseEntity<>("User taken!", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>("User taken! "+ex.getLocalizedMessage(), HttpStatus.FORBIDDEN);
         }
     }
 

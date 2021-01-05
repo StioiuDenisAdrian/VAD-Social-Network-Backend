@@ -20,7 +20,7 @@ public class RecommendationSystem {
 
             if (doc.replace('.', ' ').replace(',', ' ').replace(':', ' ').replace(';', ' ')
                     .replace('(', ' ').replace(')', ' ').replace('[', ' ').replace(']', ' ')
-                    .replace('{', ' ').replace('}', ' ').replace('!', ' ').replace('?', ' ').toLowerCase().contains(term))
+                    .replace('{', ' ').replace('}', ' ').replace('!', ' ').replace('?', ' ').replace('#', ' ').toLowerCase().contains(term))
                 c++;
         }
         idf = Math.log10((1 + size) / (1 + c) + 1);
@@ -30,7 +30,7 @@ public class RecommendationSystem {
     private double frequencyInDocument(String document, String term) {
         document = document.replace('.', ' ').replace(',', ' ').replace(':', ' ').replace(';', ' ')
                 .replace('(', ' ').replace(')', ' ').replace('[', ' ').replace(']', ' ')
-                .replace('{', ' ').replace('}', ' ').replace('!', ' ').replace('?', ' ').toLowerCase();
+                .replace('{', ' ').replace('}', ' ').replace('!', ' ').replace('?', ' ').replace('#', ' ').toLowerCase();
         term = term.toLowerCase();
         Pattern p = Pattern.compile(term);
         Matcher m = p.matcher(document);
@@ -94,7 +94,7 @@ public class RecommendationSystem {
             double simillarityCoefficient = 0;
             String[] terms = description.replace('.', ' ').replace(',', ' ').replace(':', ' ').replace(';', ' ')
                     .replace('(', ' ').replace(')', ' ').replace('[', ' ').replace(']', ' ')
-                    .replace('{', ' ').replace('}', ' ').replace('!', ' ').replace('?', ' ').split(" ");
+                    .replace('{', ' ').replace('}', ' ').replace('!', ' ').replace('?', ' ').replace('#', ' ').split(" ");
             for (String term : terms) {
                 if (checkStopWord(term)) {
                     simillarityCoefficient+=similarity( likedDescription,dislikedDescription,term);

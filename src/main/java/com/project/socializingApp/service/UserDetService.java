@@ -2,13 +2,11 @@ package com.project.socializingApp.service;
 
 import com.project.socializingApp.model.Friendship;
 import com.project.socializingApp.model.PhotoModel;
-import com.project.socializingApp.dataLayer.UserUpdateDetails;
 import com.project.socializingApp.model.User;
 import com.project.socializingApp.repository.FriendRepo;
 import com.project.socializingApp.repository.PhotoRepo;
 import com.project.socializingApp.repository.UserRepo;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -72,14 +69,12 @@ public class UserDetService implements UserDetailsService {
     public List<PhotoModel> initRecommend(String name){
         User user = userRepo.findByUserName(name).orElseThrow();
         List<PhotoModel> set = photoRepo.findAll();
-        //set.removeAll(photoRepo.findAllByUserUserIdContains(user.getUserId()));
         for (PhotoModel photoModel:set) {
             if(!user.getRecommendation().contains(photoModel)){
                 user.getRecommendation().add(photoModel);
             }
         }
-        //user.getRecommendation().addAll(set);
-        //userRepo.save(user);
+
         return user.getRecommendation();
     }
 
@@ -95,10 +90,6 @@ public class UserDetService implements UserDetailsService {
     }
 
     public List<User> getFollow(String username){
-        /*return userRepo.findByUserName(username).orElseThrow().getFriends().stream()
-                .filter(e->e.getOwner().getUserName().equals(username))
-                .map(Friendship::getTarget)
-                .collect(Collectors.toList());*/
         return friendRepo.findAll().stream()
                 .filter(e -> e.getOwner().getUserName().equals(username))
                 .map(Friendship::getTarget)
@@ -108,10 +99,6 @@ public class UserDetService implements UserDetailsService {
     public List<User> setFollow(String username, String follow){
         User user = userRepo.findByUserName(username).orElseThrow();
         User followed = userRepo.findByUserName(follow).orElseThrow();
-        /*List<User> friends = user.getFriends().stream()
-                .filter(e->e.getOwner().getUserName().equals(username))
-                .map(Friendship::getTarget)
-                .collect(Collectors.toList());*/
         List<User> friends = friendRepo.findAll().stream()
                 .filter(e -> e.getOwner().getUserName().equals(username))
                 .map(Friendship::getTarget)
@@ -121,29 +108,20 @@ public class UserDetService implements UserDetailsService {
         friendship.setTarget(followed);
         if(friends.contains(followed)){
             friends.remove(followed);
-            /*user.getFriends().remove(*/friendRepo.deleteByOwnerAndTarget(user,followed);
+            friendRepo.deleteByOwnerAndTarget(user,followed);
         }else{
             friends.add(followed);
-            /*user.getFriends().add(*/friendRepo.save(friendship);
+           friendRepo.save(friendship);
         }
 
         return friends;
     }
 
     public boolean isFollow(String username, String follow){
-        /*User user = userRepo.findByUserName(username).orElseThrow();*/
         User followed = userRepo.findByUserName(follow).orElseThrow();
-        /*List<User> friends = user.getFriends().stream()
-                .filter(e->e.getOwner().getUserName().equals(username))
-                .map(Friendship::getTarget)
-                .collect(Collectors.toList());*/
         return friendRepo.findAll().stream()
                 .filter(e -> e.getOwner().getUserName().equals(username))
                 .anyMatch(e -> e.getTarget().getUserName().equals(follow));
-       /* if(friends.contains(followed)){
-            return true;
-        }
-        return false;*/
     }
 
     public List<String> listAllUsers(){

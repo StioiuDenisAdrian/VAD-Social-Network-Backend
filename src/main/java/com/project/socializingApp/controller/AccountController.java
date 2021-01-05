@@ -61,6 +61,7 @@ public class AccountController {
             System.out.println(ex);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
       
     @GetMapping("/usernames")
     @ResponseStatus(HttpStatus.OK)

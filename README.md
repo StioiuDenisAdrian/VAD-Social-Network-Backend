@@ -1,7 +1,5 @@
 VAD socializing app
 
-Mihali Vlad
-
 January 2021
 
 1 Team
